@@ -22,53 +22,51 @@ var styles = {
   }
 };
 
-var createNode = function(config) {
-  return(
-    <Node config={config}/>
-  );
-};
-
-var getStyle = function(config) {
-  return m.get(config, "evaluated") ? styles.selected : styles.notselected;
-};
-
-var infixNode = function(config) {
-  var style = getStyle(config);
-  return (
-    <span style={style} title={m.get(config, "value", "NOT EVALUATED YET")}>
-      {createNode(m.getIn(config, ["children", 0]))}
-      <span>{m.get(config, "prependSource", "")}</span>
-      <span>{m.get(config, "textSource", "")}</span>
-      <span>{m.get(config, "appendSource", "")}</span>
-      {createNode(m.getIn(config, ["children", 1]))}
-    </span>
-  );
-};
-
-var prefixNode = function(config) {
-  var style = getStyle(config);
-  return (
-    <span style={style} title={m.get(config, "value", "NOT EVALUATED YET")}>
-      <span>{m.get(config, "prependSource", "")}</span>
-      <span>{m.get(config, "textSource", "")}</span>
-      <span>{m.get(config, "prependArgs", "")}</span>
-      {m.intoArray(m.map(createNode, m.get(config, "children")))}
-      <span>{m.get(config, "appendArgs", "")}</span>
-      <span>{m.get(config, "appendSource", "")}</span>
-    </span>
-  );
-};
 
 var Node = React.createClass({
   shouldComponentUpdate: function(nextProps, nextState) {
     return this.props.config != nextProps.config;
   },
   render: function() {
-    if (m.get(this.props.config, "infix")) {
-      return infixNode(this.props.config)
+    var config = this.props.config;
+    if (m.get(config, "infix")) {
+      return this.infixNode(config)
     } else {
-      return prefixNode(this.props.config)
+      return this.prefixNode(config)
     }
+  },
+  prefixNode : function(config) {
+    var style = this.getStyle(config);
+    return (
+      <span style={style} title={m.get(config, "value", "NOT EVALUATED YET")}>
+        <span>{m.get(config, "prependSource", "")}</span>
+        <span>{m.get(config, "textSource", "")}</span>
+        <span>{m.get(config, "prependArgs", "")}</span>
+        {m.intoArray(m.map(this.createNode, m.get(config, "children")))}
+        <span>{m.get(config, "appendArgs", "")}</span>
+        <span>{m.get(config, "appendSource", "")}</span>
+      </span>
+    );
+  },
+  createNode : function(config) {
+    return(
+      <Node config={config}/>
+    );
+  },
+  infixNode : function(config) {
+    var style = this.getStyle(config);
+    return (
+      <span style={style} title={m.get(config, "value", "NOT EVALUATED YET")}>
+        {this.createNode(m.getIn(config, ["children", 0]))}
+        <span>{m.get(config, "prependSource", "")}</span>
+        <span>{m.get(config, "textSource", "")}</span>
+        <span>{m.get(config, "appendSource", "")}</span>
+        {this.createNode(m.getIn(config, ["children", 1]))}
+      </span>
+    );
+  },
+  getStyle : function(config) {
+    return m.get(config, "evaluated") ? styles.selected : styles.notselected;
   }
 });
 
