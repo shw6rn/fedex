@@ -13,12 +13,11 @@ var m = mori;
 
 var styles = {
   selected: {
-    backgroundColor: "green",
-    fontSize: 30
+    backgroundColor: "#A5D1A5",
+    borderRadius: 1
   },
   notselected: {
-    backgroundColor: "white",
-    fontSize: 12
+    backgroundColor: "white"
   },
   beginning: {
 
@@ -97,11 +96,11 @@ var App = React.createClass({
     if (this.state.loaded) {
       return (
         <div>
-          <Node config={this.state.config}/>
           <Controls
             currentIndex={this.state.currentIndex}
             maxIndex={m.count(this.state.snapshots) - 1}
             updateIndexOp={this.updateIndexOp}/>
+          <Node config={this.state.config}/>
         </div>
       );
     } else {
@@ -193,10 +192,10 @@ var Controls = React.createClass({
   render: function() {
     return (
       <div>
-        <button style={styles.beginning} onClick={this.goToBeginning}>Beginning</button>
-        <button style={styles.step_back} onClick={this.stepBack}>Step Back</button>
-        <button style={styles.step} onClick={this.step}>Step</button>
-        <button style={styles.end} onClick={this.goToEnd}>End</button>
+        <button style={styles.beginning} onClick={this.goToBeginning}><i className="fa fa-fast-backward"/></button>
+        <button style={styles.step_back} onClick={this.stepBack}><i className="fa fa-step-backward"/></button>
+        <button style={styles.step} onClick={this.step}><i className="fa fa-step-forward"/></button>
+        <button style={styles.end} onClick={this.goToEnd}><i className="fa fa-fast-forward"/></button>
       </div>
    );
   },
