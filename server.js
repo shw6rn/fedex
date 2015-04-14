@@ -14,9 +14,12 @@ var fs = require('fs');
 var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
-var app = express();
+var cors = require('cors')
+var app = express()
+app.use(cors())
 
 app.set('port', (process.env.PORT || 3000));
+
 
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
