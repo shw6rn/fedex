@@ -1,5 +1,8 @@
 var m = mori;
 
+var strucureUrl = "/suite/webapi/structure";
+var traceUrl = "/suite/webapi/evaluationTrace";
+
 var styles = {
   selected: {
     backgroundColor: "#A5D1A5",
@@ -116,51 +119,36 @@ var App = React.createClass({
     });
   },
   reevaluateExpression: function(expression) {
-    console.log("CALL THE SERVER!");
-    var initialSnapshot = m.toClj({
-      evaluated: false,
-      evalPath: [],
-      infix: false,
-      textSource: "sum",
-      children: [
-        {
-          evaluated: false,
-          evalPath: [0],
-          textSource: "one",
-          appendSource: ","
-        },
-        {
-          evaluated: false,
-          evalPath: [1],
-          textSource: "two",
-          prependSource: " "
-        }
-      ],
-      prependArgs: "(",
-      appendArgs: ")"
-    });
+    console.log("calling first ajax call");
+    var self = this;
+    $.ajax({
+      url: strucureUrl,
+      dataType: "json",
+      type: "GET",
+      data: {expression: expression},
+      success: function(structure) {
+        var initialSnapshot = m.toClj(structure);
 
-    var events = m.toClj([
-      {
-        path: [0],
-        value: "one"
+        $.ajax({
+          url: traceUrl,
+          dataType: "json",
+          type: "GET",
+          data: {expression: expression},
+          success: function(trace) {
+            var events = m.toClj(trace);
+            self.setState({
+              config: initialSnapshot,
+              snapshots: self.getAllSnapshots(initialSnapshot, events),
+              loaded: true,
+              currentIndex: 0,
+              mode:'debugger'
+            });
+          }
+        });
       },
-      {
-        path: [1],
-        value: "two"
-      },
-      {
-        path: [],
-        value: "three"
+      error: function(err) {
+        console.log(err);
       }
-    ]);
-
-    this.setState({
-      config: initialSnapshot,
-      snapshots: this.getAllSnapshots(initialSnapshot, events),
-      loaded: true,
-      currentIndex: 0,
-      mode:'debugger'
     });
   },
   updateIndexOp: function(index) {
