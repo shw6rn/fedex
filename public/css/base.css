@@ -27,6 +27,10 @@ button {
   padding: 5px 10px;
 }
 
+#inputbutton, #evalbutton {
+  height: 34px;
+}
+
 button:hover {
   background-color: #ccc;
   cursor: pointer;

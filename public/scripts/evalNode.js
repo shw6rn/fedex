@@ -71,7 +71,7 @@ var InputPanel = React.createClass({
     return (
       <div>
         <div>
-          <button className="fillParent" onClick={this.onClick}>Evaluate</button>
+          <button id="evalbutton" className="fillParent" onClick={this.onClick}>Evaluate</button>
         </div>
         <textarea className="fillParent" value={this.state.expression} onChange={this.onChange}/>
       </div>
@@ -98,8 +98,8 @@ var App = React.createClass({
     };
   },
   render: function() {
-    if (!this.state.loaded || this.state.mode === 'input') {
-      return <InputPanel onExpressionChange={this.reevaluateExpression}/>;
+    if (!this.state.loaded || this.state.mode == 'input') {
+      return <InputPanel onExpressionChange={this.reevaluateExpression}/>
     } else {
       return (
         <div>
@@ -190,11 +190,11 @@ var Controls = React.createClass({
   render: function() {
     return (
       <div>
-        <button className="debugger" onClick={this.goToBeginning}><i className="fa fa-fast-backward"/></button>
-        <button className="debugger" onClick={this.stepBack}><i className="fa fa-step-backward"/></button>
-        <button className="debugger" onClick={this.changeToInputMode}><i className="fa fa-pencil-square-o"/></button>
-        <button className="debugger" onClick={this.step}><i className="fa fa-step-forward"/></button>
-        <button className="debugger" onClick={this.goToEnd}><i className="fa fa-fast-forward"/></button>
+        <button className="debugger" onClick={this.goToBeginning}>⇚ Beginning</button>
+        <button className="debugger" onClick={this.stepBack}>↲ Step Back</button>
+        <button id="inputbutton" className="debugger" onClick={this.changeToInputMode}>Input</button>
+        <button className="debugger" onClick={this.step}>Step ↳</button>
+        <button className="debugger" onClick={this.goToEnd}>End ⇛</button>
       </div>
    );
   },
