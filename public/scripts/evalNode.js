@@ -7,21 +7,8 @@ var styles = {
   },
   notselected: {
     backgroundColor: "white"
-  },
-  beginning: {
-
-  },
-  end: {
-
-  },
-  step: {
-
-  },
-  step_back: {
-
   }
 };
-
 
 var Node = React.createClass({
   shouldComponentUpdate: function(nextProps, nextState) {
@@ -80,8 +67,10 @@ var InputPanel = React.createClass({
   render: function() {
     return (
       <div>
-        <textarea value={this.state.expression} onChange={this.onChange}/>
-        <button onClick={this.onClick}>Evaluate</button>
+        <div>
+          <button className="fillParent" onClick={this.onClick}>Evaluate</button>
+        </div>
+        <textarea className="fillParent" value={this.state.expression} onChange={this.onChange}/>
       </div>
     );
   },
@@ -106,25 +95,25 @@ var App = React.createClass({
     };
   },
   render: function() {
-    if (this.state.loaded) {
-      var content;
-      if (this.state.mode === 'input') {
-        content = <InputPanel onExpressionChange={this.reevaluateExpression}/>;
-      } else {
-        content = <Node config={this.state.config}/>;
-      }
+    if (!this.state.loaded || this.state.mode === 'input') {
+      return <InputPanel onExpressionChange={this.reevaluateExpression}/>;
+    } else {
       return (
         <div>
           <Controls
             currentIndex={this.state.currentIndex}
             maxIndex={m.count(this.state.snapshots) - 1}
-            updateIndexOp={this.updateIndexOp}/>
-          {content}
+            updateIndexOp={this.updateIndexOp}
+            changeToInputMode={this.changeToInputMode}/>
+          <Node config={this.state.config}/>
         </div>
       );
-    } else {
-      return <InputPanel onExpressionChange={this.reevaluateExpression}/>;
     }
+  },
+  changeToInputMode: function() {
+    this.setState({
+      mode: 'input'
+    });
   },
   reevaluateExpression: function(expression) {
     console.log("CALL THE SERVER!");
@@ -213,10 +202,11 @@ var Controls = React.createClass({
   render: function() {
     return (
       <div>
-        <button style={styles.beginning} onClick={this.goToBeginning}><i className="fa fa-fast-backward"/></button>
-        <button style={styles.step_back} onClick={this.stepBack}><i className="fa fa-step-backward"/></button>
-        <button style={styles.step} onClick={this.step}><i className="fa fa-step-forward"/></button>
-        <button style={styles.end} onClick={this.goToEnd}><i className="fa fa-fast-forward"/></button>
+        <button className="debugger" onClick={this.goToBeginning}><i className="fa fa-fast-backward"/></button>
+        <button className="debugger" onClick={this.stepBack}><i className="fa fa-step-backward"/></button>
+        <button className="debugger" onClick={this.changeToInputMode}><i className="fa fa-pencil-square-o"/></button>
+        <button className="debugger" onClick={this.step}><i className="fa fa-step-forward"/></button>
+        <button className="debugger" onClick={this.goToEnd}><i className="fa fa-fast-forward"/></button>
       </div>
    );
   },
@@ -236,6 +226,9 @@ var Controls = React.createClass({
   },
   goToEnd: function() {
     this.props.updateIndexOp(this.props.maxIndex);
+  },
+  changeToInputMode: function() {
+    this.props.changeToInputMode();
   }
 });
 
