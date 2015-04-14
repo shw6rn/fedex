@@ -1,3 +1,17 @@
 span {
   white-space: pre;
+  font: 20px consolas;
+}
+
+button {
+  width: 25%;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+  box-shadow: none;
+}
+
+button:hover {
+  background-color: #ccc;
+  cursor: pointer;
+  box-shadow: none;
 }
