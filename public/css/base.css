@@ -25,10 +25,7 @@ button {
   margin-bottom: 10px;
   box-shadow: none;
   padding: 5px 10px;
-}
-
-#inputbutton, #evalbutton {
-  height: 34px;
+  height: 40px;
 }
 
 button:hover {
