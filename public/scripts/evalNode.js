@@ -11,6 +11,10 @@
  */
 var m = mori;
 
+var defaultExpression = "sum(2, product(3, sum(5, 2-1), 3 * 3), 2 / (2 + 3))"
+var strucureUrl = "/ae/webapi/structure";
+var traceUrl = "/ae/webapi/evaluationTrace";
+
 var styles = {
   selected: {
     backgroundColor: "green",
@@ -108,49 +112,36 @@ var App = React.createClass({
     }
   },
   componentDidMount: function() {
-    var initialSnapshot = m.toClj({
-      evaluated: false,
-      evalPath: [],
-      infix: false,
-      textSource: "sum",
-      children: [
-        {
-          evaluated: false,
-          evalPath: [0],
-          textSource: "one",
-          appendSource: ","
-        },
-        {
-          evaluated: false,
-          evalPath: [1],
-          textSource: "two",
-          prependSource: " "
-        }
-      ],
-      prependArgs: "(",
-      appendArgs: ")"
-    });
 
-    var events = m.toClj([
-      {
-        path: [0],
-        value: "one"
+    console.log("calling first ajax call");
+    var self = this;
+    $.ajax({
+      url: strucureUrl,
+      dataType: "json",
+      type: "GET",
+      data: {expression: defaultExpression},
+      success: function(structure) {
+        var initialSnapshot = m.toClj(structure);
+
+        $.ajax({
+          url: traceUrl,
+          dataType: "json",
+          type: "GET",
+          data: {expression: defaultExpression},
+          success: function(trace) {
+            var events = m.toClj(trace);
+            self.setState({
+              config: initialSnapshot,
+              snapshots: self.getAllSnapshots(initialSnapshot, events),
+              loaded: true,
+              currentIndex: 0
+            });
+          }
+        });
       },
-      {
-        path: [1],
-        value: "two"
-      },
-      {
-        path: [],
-        value: "three"
+      error: function(err) {
+        console.log(err);
       }
-    ]);
-
-    this.setState({
-      config: initialSnapshot,
-      snapshots: this.getAllSnapshots(initialSnapshot, events),
-      loaded: true,
-      currentIndex: 0
     });
   },
   updateEvalState: function(index) {
