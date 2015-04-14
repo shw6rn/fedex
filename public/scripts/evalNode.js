@@ -1,14 +1,3 @@
-/**
- * This file provided by Facebook is for non-commercial testing and evaluation purposes only.
- * Facebook reserves all rights not expressly granted.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * FACEBOOK BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
- * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
 var m = mori;
 
 var styles = {
@@ -83,9 +72,35 @@ var Node = React.createClass({
   }
 });
 
+
+var InputPanel = React.createClass({
+  getInitialState: function() {
+    return {
+      expression:""
+    };
+  },
+  render: function() {
+    return (
+      <div>
+        <textarea value={this.state.expression} onChange={this.onChange}/>
+        <button onClick={this.onClick}>Evaluate</button>
+      </div>
+    );
+  },
+  onChange: function(e) {
+    this.setState({
+      expression:e.target.value
+    })
+  },
+  onClick: function(e) {
+    this.props.onExpressionChange(this.state.expression);
+  }
+});
+
 var App = React.createClass({
   getInitialState: function() {
     return {
+      mode:'input',
       loaded: false,
       snapshots: m.vector(),
       config: null,
@@ -94,20 +109,27 @@ var App = React.createClass({
   },
   render: function() {
     if (this.state.loaded) {
+      var content;
+      if (this.state.mode === 'input') {
+        content = <InputPanel onExpressionChange={this.reevaluateExpression}/>;
+      } else {
+        content = <Node config={this.state.config}/>;
+      }
       return (
         <div>
           <Controls
             currentIndex={this.state.currentIndex}
             maxIndex={m.count(this.state.snapshots) - 1}
             updateIndexOp={this.updateIndexOp}/>
-          <Node config={this.state.config}/>
+          {content}
         </div>
       );
     } else {
-      return <div>Loading...</div>;
+      return <InputPanel onExpressionChange={this.reevaluateExpression}/>;
     }
   },
-  componentDidMount: function() {
+  reevaluateExpression: function(expression) {
+    console.log("CALL THE SERVER!");
     var initialSnapshot = m.toClj({
       evaluated: false,
       evalPath: [],
@@ -150,7 +172,8 @@ var App = React.createClass({
       config: initialSnapshot,
       snapshots: this.getAllSnapshots(initialSnapshot, events),
       loaded: true,
-      currentIndex: 0
+      currentIndex: 0,
+      mode:'debugger'
     });
   },
   updateIndexOp: function(index) {
