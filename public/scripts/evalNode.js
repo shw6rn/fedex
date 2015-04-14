@@ -1,7 +1,7 @@
 var m = mori;
 
-var strucureUrl = "/ae/webapi/structure";
-var traceUrl = "/ae/webapi/evaluationTrace";
+var strucureUrl = "/suite/webapi/structure";
+var traceUrl = "/suite/webapi/evaluationTrace";
 
 var styles = {
   selected: {
