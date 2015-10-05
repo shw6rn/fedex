@@ -1,7 +1,7 @@
 var m = mori;
 
-var strucureUrl = "/suite/webapi/structure";
-var traceUrl = "/suite/webapi/evaluationTrace";
+var structureUrl = "/data/ped-default/rules/SYSTEM_SYSRULES_uiSubmittableForm.structure";
+var traceUrl = "/data/ped-default/tests/SAILTest/SaveMultiple/initial.trace";
 
 var styles = {
   selected: {
@@ -121,21 +121,12 @@ var App = React.createClass({
   reevaluateExpression: function(expression) {
     console.log("calling first ajax call");
     var self = this;
-    $.ajax({
-      url: strucureUrl,
-      dataType: "json",
-      type: "GET",
-      data: {expression: expression},
-      success: function(structure) {
+    $.getJSON(structureUrl, function(structure) {
         var initialSnapshot = m.toClj(structure);
 
-        $.ajax({
-          url: traceUrl,
-          dataType: "json",
-          type: "GET",
-          data: {expression: expression},
-          success: function(trace) {
-            var events = m.toClj(trace);
+        $.getJSON(traceUrl, function(trace) {
+            console.log("trace.events: " + trace.events);
+            var events = m.toClj(trace.events);
             self.setState({
               config: initialSnapshot,
               snapshots: self.getAllSnapshots(initialSnapshot, events),
@@ -143,13 +134,8 @@ var App = React.createClass({
               currentIndex: 0,
               mode:'debugger'
             });
-          }
         });
-      },
-      error: function(err) {
-        console.log(err);
-      }
-    });
+      });
   },
   updateIndexOp: function(index) {
     this.setState({

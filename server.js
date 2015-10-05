@@ -14,16 +14,14 @@ var fs = require('fs');
 var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
-var cors = require('cors')
 var app = express()
-app.use(cors())
+var serveIndex = require('serve-index')
 
 app.set('port', (process.env.PORT || 3000));
 
 
 app.use('/', express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use('/', serveIndex('public', {'icons': false}));
 
 app.get('/comments.json', function(req, res) {
   fs.readFile('comments.json', function(err, data) {
